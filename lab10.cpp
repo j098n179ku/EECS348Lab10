@@ -14,8 +14,8 @@
     negative sign. if there is a negative sign, have a boolean to make sure that sign is saved
     now loop through from back to front and front to back in order to create a substring
     that removes any of the leading or trailing zeroes. i used this link to figure out how to
-    use the substring command
-
+    use the substring command and type casting command to turn an unsigned to an int
+    https://stackoverflow.com/questions/22184403/how-to-cast-the-size-t-to-double-or-int-c
     https://www.geeksforgeeks.org/substring-in-cpp/
 
 */
@@ -33,7 +33,7 @@ std::string clean_string(std::string data)
         }
         i += 1; //increments the index by 1 to pass over the sign
     }
-    while (i < data.length() && data[i] == '0') //while the index i is less than the length of the data, and the data at the index is '0', this is a leading 0 and will be counted so it wont be kept in the substring. this while loop keeps going until it hits a non zero
+    while (i < static_cast<int>(data.length()) && data[i] == '0') //while the index i is less than the length of the data, and the data at the index is '0', this is a leading 0 and will be counted so it wont be kept in the substring. this while loop keeps going until it hits a non zero
     {
         i += 1; //increments the i index counter by 1 to check the next index
     }
@@ -61,7 +61,8 @@ std::string clean_string(std::string data)
     i needed to add an extra variable to keep track of the index in case
     there was a sign. that is what j is for because otherwise it was
     throwing errors since it was going to the index with the sign in it. i
-    also needed to reference this to parse the character as a number
+    also needed to reference this to parse the character as a number and to do static cast
+    https://stackoverflow.com/questions/22184403/how-to-cast-the-size-t-to-double-or-int-c
     https://stackoverflow.com/questions/5029840/convert-char-to-int-in-c-and-c
 
     The number parsing function first checks for a negative sign. if there is,
@@ -88,7 +89,7 @@ double parse_number(const std::string& expression)//inititalizes the number pars
         has_neg = true;//has_neg will be true so it can be returned as a negative number
         j +=1; //adds 1 to j so it can be set as the new index for i to reset to
     }
-    for (int i = 0; i < expression.length(); i++) //for each index inside of the string, iterate through it to look for any decimal in the indeces
+    for (int i = 0; i < static_cast<int>(expression.length()); i++) //for each index inside of the string, iterate through it to look for any decimal in the indeces
     {
         if (expression[i] == '.')//if a decimal point is found, then that will flag for using the if statement that does work with a decimal point
         {
@@ -112,7 +113,7 @@ double parse_number(const std::string& expression)//inititalizes the number pars
             sum += (expression[i] - '0') * multiplier; //changes the character at the index of the expression to be a number, then it multiplies it with the multiplier which varies depending on what place the index is
             multiplier *= 10; // multiplies the multiplier by 10 in order to properly multiply the next place in the index
         }
-        for (int i = decimal_index + 1; i < expression.length(); i++) //starting at the index after the decimal point, it loops forward to the index until it reaches the end, for each loop the dividor gets multiplied by 10 for each place in the decimal
+        for (int i = decimal_index + 1; i < static_cast<int>(expression.length()); i++) //starting at the index after the decimal point, it loops forward to the index until it reaches the end, for each loop the dividor gets multiplied by 10 for each place in the decimal
         {
             sum += (expression[i] - '0') / divisor; //changes the character at the index of the expression to be a number, then it divides it with the divisor which varies depending on what place the index is
             divisor *= 10; //multiplies the divisor by 10 to account for the change in place of the next decimal place
@@ -147,6 +148,14 @@ bool is_valid(std::string data) //initializes the is_valid function and passes t
             if(sign_count > 1)//if the sign count is greater than 1, then the format of the string is not valid
             {
                 return false; //returns false to let the program skip over this line
+            }
+        }
+        if(c == '.') //if the character equals a period or decimal point
+        {
+            decimal_count +=1;//increments the decimal counter by 1 to ensure only 1 or 0 decimal points is in the string
+            if(decimal_count > 1)//if the decimal count is greater than 1, then the input is not valid
+            {
+                return false; //returns false so the program can skip the line
             }
         }
     }
